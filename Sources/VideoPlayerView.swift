@@ -138,9 +138,9 @@ extension AVLayerVideoGravity {
     init(_ contentMode: ImageResizingMode) {
         switch contentMode {
         case .aspectFit: self = .resizeAspect
-        case .aspectFill: self = .resizeAspectFill
         case .center: self = .resizeAspect
         case .fill: self = .resize
+        default: self = .resizeAspectFill
         }
     }
 }

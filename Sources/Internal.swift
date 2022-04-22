@@ -94,6 +94,14 @@ extension UIView.ContentMode {
     init(resizingMode: ImageResizingMode) {
         switch resizingMode {
         case .aspectFill: self = .scaleAspectFill
+        case .top: self = .top
+        case .bottom: self = .bottom
+        case .left: self = .left
+        case .right: self = .right
+        case .topLeft: self = .topLeft
+        case .topRight: self = .topRight
+        case .bottomLeft: self = .bottomLeft
+        case .bottomRight: self = .bottomRight
         case .aspectFit: self = .scaleAspectFit
         case .center: self = .center
         case .fill: self = .scaleToFill

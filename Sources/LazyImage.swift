@@ -206,16 +206,52 @@ public struct LazyImage<Content: View>: View {
             makeDefaultContent()
         }
     }
-
+    
+    #if os(watchOS)
+    private static func alignment(for resizingMode: ImageResizingMode) -> Alignment {
+        switch resizingMode {
+        case .top:
+            return .top
+        case .bottom:
+            return .bottom
+        case .left:
+            return .leading
+        case .right:
+            return .trailing
+        case .topLeft:
+            return .topLeading
+        case .topRight:
+            return .topTrailing
+        case .bottomLeft:
+            return .bottomLeading
+        case .bottomRight:
+            return .bottomTrailing
+        default:
+            return .center
+        }
+    }
+    #endif
+    
     @ViewBuilder private func makeDefaultContent() -> some View {
         if let imageContainer = model.imageContainer {
             #if os(watchOS)
-            switch resizingMode ?? ImageResizingMode.aspectFill {
+            let mode = resizingMode ?? ImageResizingMode.aspectFill
+            switch mode {
             case .center: model.view
             case .aspectFit, .aspectFill:
                 model.view?
                     .resizable()
-                    .aspectRatio(contentMode: resizingMode == .aspectFit ? .fit : .fill)
+                    .aspectRatio(contentMode: mode == .aspectFit ? .fit : .fill)
+            case .top, .bottom, .left, .right, .topLeft, .topRight, .bottomLeft, .bottomRight:
+                GeometryReader { geometry in
+                    model.view?
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(
+                            width: geometry.size.width,
+                            height: geometry.size.height, alignment: Self.alignment(for: mode)
+                        )
+                }
             case .fill:
                 model.view?
                     .resizable()
@@ -328,6 +364,14 @@ return imageContainer.map { Image(uiImage: $0.image) }
 public enum ImageResizingMode {
     case aspectFit
     case aspectFill
+    case top
+    case bottom
+    case left
+    case right
+    case topLeft
+    case topRight
+    case bottomLeft
+    case bottomRight
     case center
     case fill
 }
